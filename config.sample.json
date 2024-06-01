@@ -1,0 +1,11 @@
+{
+    "telegramToken": "",
+    "telegramUrl": "",
+    "webhookUrl": "https://<domain>/incomingUpdate",
+    "tokenSecret": 4,
+    "apis": {
+        "tmdb": {
+            "token": ""
+        }
+    }
+}

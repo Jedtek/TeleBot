@@ -1,0 +1,26 @@
+{
+  "type": "module",
+  "name": "TeleBot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fastify": "^4.27.0",
+    "http": "0.0.1-security",
+    "http4ts": "^0.1.2",
+    "luxon": "^3.4.4",
+    "node-fetch": "^3.3.2",
+    "typescript": "^5.4.5"
+  },
+  "devDependencies": {
+    "@grammyjs/types": "^3.8.0",
+    "@types/luxon": "^3.4.2",
+    "@types/node": "^20.12.13"
+  }
+}
