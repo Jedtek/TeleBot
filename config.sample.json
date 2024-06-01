@@ -5,7 +5,12 @@
     "tokenSecret": 4,
     "apis": {
         "tmdb": {
+            "apiUrl": "https://api.themoviedb.org/3/",
+            "imageBaseUrl": "https://image.tmdb.org/t/p/w500/",
             "token": ""
+        },
+        "kitsu": {
+            "apiUrl": "https://kitsu.io/api/edge/anime/"
         }
     }
 }

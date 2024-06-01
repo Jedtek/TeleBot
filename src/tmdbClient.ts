@@ -2,12 +2,12 @@ import fetch from 'node-fetch';
 import { DateTime } from 'luxon';
 import config from '../config.json' with { type: "json" };
 
-type Genre = {
+interface Genre {
     'id': number;
     'name': string;
 }
 
-type Movie = {
+interface Movie {
     'adult': boolean;
     'backdrop_path': string;
     'genre_ids': Array<number>;
@@ -24,7 +24,7 @@ type Movie = {
     'vote_count': number;
 }
 
-type Movies = {
+interface Movies {
     'results': Array<Movie>
 }
 
@@ -35,13 +35,13 @@ class TMDBClient {
     pages: number;
 
     constructor() {
-        this.apiUrl = 'https://api.themoviedb.org/3/';
+        this.apiUrl = config.apis.tmdb.apiUrl;
         this.apiToken = config.apis.tmdb.token;
-        this.imageBaseUrl = 'https://image.tmdb.org/t/p/w500/';
+        this.imageBaseUrl = config.apis.tmdb.imageBaseUrl;
         this.pages = 5;
     }
 
-    async _formatResponse(movie: any, genres: Array<Genre>): Promise<string> {
+    async _formatResponse(movie: Movie, genres: Array<Genre>): Promise<string> {
         let finalGenres: Array<Genre> = [];
         movie.genre_ids.forEach((genre: number) => {
             let genreMatch: Genre = genres.find(g => g.id == genre);
@@ -69,14 +69,14 @@ ${this.imageBaseUrl}${movie.backdrop_path}
                     'Authorization': 'Bearer ' + this.apiToken 
                 }
             });
-            const responseJSON: any = await movieResponse.json();
+            const responseJSON: unknown = await movieResponse.json();
             return responseJSON;
         } catch (error) {
             return false;
         }
     }
 
-    async _getGenres(): Promise<Array<object>> {
+    async _getGenres(): Promise<Array<Genre>> {
         const genres = await this._getURL(this.apiUrl + 'genre/movie/list');
         if(genres === false) {
             throw new Error('Failed to get genres');
@@ -90,20 +90,20 @@ ${this.imageBaseUrl}${movie.backdrop_path}
 
     async getRandomMovie(): Promise<string> {
         try {
-            let dt = DateTime.now();
+            let dt: DateTime<true> = DateTime.now();
             const formattedDt:string = dt.toFormat('yyyy-LL-dd');
             const thisYear:number = dt.year;
             let movies:Array<Movie> = [];
-            for (let page = 1; page <= this.pages; page++) {
+            for (let page:number = 1; page <= this.pages; page++) {
                 let curPage: Movies = await this._getMoviePage(page, formattedDt, thisYear);
                 movies = movies.concat(curPage.results);
             }
             if (!movies.length) {
                 throw new Error('Failed to get movies data');
             }
-            const movie = movies[Math.floor(Math.random() * movies.length)];
+            const movie: Movie = movies[Math.floor(Math.random() * movies.length)];
             if(movie) {
-                const genres = await this._getGenres() as Array<Genre>;
+                const genres: Array<Genre> = await this._getGenres();
                 return await this._formatResponse(movie, genres);
             } else {
                 return 'Failed to find a movie';

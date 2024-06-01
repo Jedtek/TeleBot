@@ -1,10 +1,11 @@
 import fetch from 'node-fetch';
+import config from '../config.json' with { type: "json" };
 
 class KitsuClient {
     apiUrl: string;
 
     constructor() {
-        this.apiUrl = 'https://kitsu.io/api/edge/anime/';
+        this.apiUrl = config.apis.kitsu.apiUrl;
     }
 
     async _formatResponse(anime: any, genres: any): Promise<string> {
