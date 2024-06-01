@@ -1,14 +1,14 @@
 {
   "type": "module",
-  "name": "TeleBot",
+  "name": "telebot",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc -p ./tsconfig.json",
-    "run": "pnpm run build && node dist/index.js",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "buildStart": "pnpm run build && node dist/index.js"
   },
   "keywords": [],
   "author": "",
