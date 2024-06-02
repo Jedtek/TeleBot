@@ -48,6 +48,32 @@ class TelegramClient {
         return false;
     }
 
+    async _recommendAnime(chatId: number): Promise<boolean> {
+        const kitsuClient = new KitsuClient();
+        const anime: string = await kitsuClient.getRandomAnime();
+        await this.sendMessage(anime, chatId);
+        return true;
+    }
+
+    async _recommendMovie(chatId: number): Promise<boolean> {
+        const tmdbClient = new TMDBClient();
+        const movie: string = await tmdbClient.getRandomMovie();
+        await this.sendMessage(movie, chatId);
+        return true;
+    }
+
+    async _processChat(update: Update): Promise<boolean> {
+        // Commands
+        if (update.message.text === '/recommend_anime') {
+            await this._recommendAnime(update.message.chat.id);
+        } else if (update.message.text === '/recommend_movie') {
+            await this._recommendMovie(update.message.chat.id);
+        } else {
+            await this.sendMessage(update.message.text, update.message.chat.id);
+        }
+        return true;
+    }
+
     async setUpdatesWebhook(url: string): Promise<boolean> {
         if(await this._checkForWebhook() === false) {
             return false;
@@ -115,18 +141,7 @@ class TelegramClient {
     async processUpdate(update: Update): Promise<boolean> {
         if (typeof update.update_id === 'number') {
             if (typeof update.message.chat.id === 'number') {
-                // Commands
-                if (update.message.text === '/recommend_anime') {
-                    const kitsuClient = new KitsuClient();
-                    const anime: string = await kitsuClient.getRandomAnime();
-                    await this.sendMessage(anime, update.message.chat.id);
-                } else if (update.message.text === '/recommend_movie') {
-                    const tmdbClient = new TMDBClient();
-                    const movie: string = await tmdbClient.getRandomMovie();
-                    await this.sendMessage(movie, update.message.chat.id);
-                } else {
-                    await this.sendMessage(update.message.text, update.message.chat.id);
-                }
+                await this._processChat(update);
                 return true;
             } else {
                 return true; // Future.
