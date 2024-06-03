@@ -1,8 +1,8 @@
 import { createHash } from 'crypto';
-import { WebhookInfo, Message } from '@grammyjs/types';
-import { Update } from '@grammyjs/types';
-import KitsuClient from './kitsuClient.js';
-import TMDBClient from './tmdbClient.js';
+import { WebhookInfo, Message, Update } from '@grammyjs/types';
+import KitsuClient from './api/kitsuClient.js';
+import TMDBClient from './api/tmdbClient.js';
+import GeminiClient from './api/geminiClient.js'; 
 
 class TelegramClient {
     telegramUrl: string;
@@ -62,12 +62,21 @@ class TelegramClient {
         return true;
     }
 
+    async _askGemini(question: string, chatId: number): Promise<boolean> {
+        const geminiClient = new GeminiClient();
+        const reply: string = await geminiClient.askQuestion(question, chatId);
+        await this.sendMessage(reply, chatId);
+        return true;
+    }
+
     async _processChat(update: Update): Promise<boolean> {
         // Commands
         if (update.message.text === '/recommend_anime') {
             await this._recommendAnime(update.message.chat.id);
         } else if (update.message.text === '/recommend_movie') {
             await this._recommendMovie(update.message.chat.id);
+        } else if (update.message.text.substring(0, 11) === '/ask_gemini') {
+            await this._askGemini(update.message.text.slice(11), update.message.chat.id);
         } else {
             await this.sendMessage(update.message.text, update.message.chat.id);
         }

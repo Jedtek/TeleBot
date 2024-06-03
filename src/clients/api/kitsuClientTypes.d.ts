@@ -1,3 +1,5 @@
+import { StringLiteral } from "typescript";
+
 interface kitsuJSONResponse {
     'data': {
         'id': number;
@@ -188,3 +190,28 @@ interface kitsuJSONResponse {
         }
     }
 }
+
+interface kitsuJSONGenresResponse {
+   'data': Array<{
+        'id': number;
+        'type': string;
+        'links': {
+            'self': string;
+        },
+        'attributes': {
+            'createdAt': string;
+            'updatedAt': string;
+            'name': string;
+            'slug': string;
+            'description': string;           
+        }}>;
+        'meta': {
+            'count': number
+        },
+        'links': {
+            'first': string;
+            'last': string;
+        }
+}
+
+export type { kitsuJSONResponse, kitsuJSONGenresResponse };

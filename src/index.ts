@@ -1,4 +1,4 @@
-import TelegramClient from './telegramClient.js';
+import TelegramClient from './clients/telegramClient.js';
 import config from '../config.json' with { type: "json" };
 import Fastify from 'fastify';
 import { Update } from '@grammyjs/types';

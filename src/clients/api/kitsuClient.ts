@@ -1,11 +1,22 @@
-import fetch from 'node-fetch';
-import config from '../config.json' with { type: "json" };
+import { APIClient } from './apiClient.js';
+import config from '../../../config.json' with { type: "json" };
+import type { kitsuJSONResponse, kitsuJSONGenresResponse } from './kitsuClientTypes';
+import type { RequestOptions } from './apiClientTypes';
 
-class KitsuClient {
+class KitsuClient extends APIClient {
     apiUrl: string;
+    requestOptions: RequestOptions;
 
     constructor() {
+        super();
         this.apiUrl = config.apis.kitsu.apiUrl;
+        this.requestOptions = {
+            method: 'GET',
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/vnd.api+json',
+            }
+        };
     }
 
     async _formatResponse(anime: any, genres: any): Promise<string> {
@@ -26,31 +37,18 @@ ${anime.data.attributes.posterImage.medium}
         return Math.floor(Math.random() * 50) + 1;
     }
 
-    async _getURL(url: string): Promise<any | boolean> {
-        try {
-            const animeResponse = await fetch(url, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/vnd.api+json' }
-            });
-            const responseJSON: any = await animeResponse.json();
-            return responseJSON;
-        } catch (error) {
-            return false;
-        }        
-    }
-
-    async _getAnimeGenres(url: string): Promise<any> {
-        return await this._getURL(url);
+    async _getAnimeGenres(url: string): Promise<kitsuJSONGenresResponse> {
+        return await this._getURL<kitsuJSONGenresResponse>(url, this.requestOptions);
     }
 
     async getRandomAnime(): Promise<string> {
         try {
-            const anime = await this._getURL(this.apiUrl + await this._getRandID());
-            if(anime === false) {
+            const anime = await this._getURL<kitsuJSONResponse>(this.apiUrl + await this._getRandID(), this.requestOptions);
+            if(anime === undefined) {
                 throw new Error('Failed to get anime');
             }
-            const genres = await this._getAnimeGenres(anime.data.relationships.genres.links.related);
-            if(genres === false) {
+            const genres: kitsuJSONGenresResponse = await this._getAnimeGenres(anime.data.relationships.genres.links.related);
+            if(typeof(genres) === 'undefined') {
                 throw new Error('Failed to get genres');
             }
             return await this._formatResponse(anime, genres);
