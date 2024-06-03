@@ -11,6 +11,9 @@
         },
         "kitsu": {
             "apiUrl": "https://kitsu.io/api/edge/anime/"
+        },
+        "gemini": {
+            "apiKey": ""
         }
     }
 }
