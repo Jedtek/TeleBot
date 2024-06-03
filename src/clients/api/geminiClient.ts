@@ -1,20 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import config from '../../../config.json' with { type: "json" };
-
-type GeminiQuestion = {
-    question: string;
-    reply: string;
-}
-
-type GeminiConversation = {
-    chatId: number;
-    data: Array<GeminiQuestion>;
-}
-
-type GeminiContext = {
-    role: string;
-    parts: string;
-}
+import { GeminiQuestion, GeminiConversation, GeminiContext } from './geminiClientTypes';
 
 class GeminiClient {
     apiKey: string;
