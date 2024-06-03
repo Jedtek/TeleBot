@@ -1,5 +1,3 @@
-import { StringLiteral } from "typescript";
-
 interface kitsuJSONResponse {
     'data': {
         'id': number;
